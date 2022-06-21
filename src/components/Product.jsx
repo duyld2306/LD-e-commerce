@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { addCart } from "../redux/action";
 import Skeleton from "react-loading-skeleton";
 import { NavLink, useParams } from "react-router-dom";
+import cartSlice from "../redux/cartSlice";
 
 const Product = () => {
   const { id } = useParams();
@@ -12,17 +12,18 @@ const Product = () => {
   useEffect(() => {
     const getProduct = async () => {
       setLoading(true);
-      const response = await fetch(`https://fakestoreapi.com/products/${id}`);
+      // const response = await fetch(`https://fakestoreapi.com/products/${id}`);
+      const response = await fetch(`http://localhost:3000/products/${id}`);
       setProduct(await response.json());
       setLoading(false);
     };
 
     getProduct();
-  }, []);
+  }, [id]);
 
   const dispatch = useDispatch();
   const addProduct = (product) => {
-    dispatch(addCart(product));
+    dispatch(cartSlice.actions.addItem(product));
   };
 
   const Loading = () => {

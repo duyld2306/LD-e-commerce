@@ -2,8 +2,7 @@ import React from "react";
 import { useSelector } from "react-redux";
 
 const CheckOut = () => {
-  const state = useSelector((state) => state.handleCart);
-  console.log(state);
+  const cartItems = useSelector((state) => state.cart);
   let total = 0;
 
   return (
@@ -14,18 +13,23 @@ const CheckOut = () => {
             <h4 className="d-flex justify-content-between align-items-center mb-3">
               <span className="text-primary">Your cart</span>
               <span className="badge bg-primary rounded-pill">
-                {state.length}
+                {cartItems.length}
               </span>
             </h4>
             <ul className="list-group mb-3">
-              {state.map((item) => {
-                total = total + item.price;
+              {cartItems.map((item) => {
+                total = total + item.price * item.qty;
                 return (
-                  <li className="list-group-item d-flex justify-content-between lh-sm">
+                  <li
+                    className="list-group-item d-flex justify-content-between lh-sm"
+                    key={item.id}
+                  >
                     <div>
-                      <h6 className="my-0">{item.title}</h6>
+                      <h6 className="my-0">
+                        {item.qty} x {item.title}
+                      </h6>
                     </div>
-                    <span className="text-muted">${item.price}</span>
+                    <span className="text-muted">${item.price * item.qty}</span>
                   </li>
                 );
               })}
@@ -51,7 +55,7 @@ const CheckOut = () => {
           </div>
           <div className="col-md-7 col-lg-8">
             <h4 className="mb-3">Billing address</h4>
-            <form className="needs-validation" novalidate="">
+            <form className="needs-validation" noValidate="">
               <div className="row g-3">
                 <div className="col-sm-6">
                   <label htmlFor="firstName" className="form-label">
@@ -62,7 +66,6 @@ const CheckOut = () => {
                     className="form-control"
                     id="firstName"
                     placeholder=""
-                    value=""
                     required=""
                   />
                   <div className="invalid-feedback">
@@ -79,7 +82,6 @@ const CheckOut = () => {
                     className="form-control"
                     id="lastName"
                     placeholder=""
-                    value=""
                     required=""
                   />
                   <div className="invalid-feedback">
@@ -154,7 +156,7 @@ const CheckOut = () => {
                     Country
                   </label>
                   <select className="form-select" id="country" required="">
-                    <option value="">Choose...</option>
+                    <option>Choose...</option>
                     <option>United States</option>
                   </select>
                   <div className="invalid-feedback">
@@ -167,7 +169,7 @@ const CheckOut = () => {
                     State
                   </label>
                   <select className="form-select" id="state" required="">
-                    <option value="">Choose...</option>
+                    <option>Choose...</option>
                     <option>California</option>
                   </select>
                   <div className="invalid-feedback">
@@ -225,7 +227,6 @@ const CheckOut = () => {
                     name="paymentMethod"
                     type="radio"
                     className="form-check-input"
-                    checked=""
                     required=""
                   />
                   <label className="form-check-label" htmlFor="credit">

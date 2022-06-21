@@ -1,36 +1,32 @@
 import React, { useEffect, useState } from "react";
 import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css"; //thêm ...skeleton.css mới có thể sử dụng được css trong thư viện react-loading-skeleton
 import { NavLink } from "react-router-dom";
 import { AiFillStar, AiOutlineStar } from "react-icons/ai";
 
 const Products = () => {
-  const [data, setData] = useState([]);
-  const [filter, setFilter] = useState(data);
+  const [productList, setProductList] = useState([]);
+  const [filter, setFilter] = useState([]);
   const [loading, setLoading] = useState(false);
-  let componentMounted = true;
 
   useEffect(() => {
     const getProducts = async () => {
       setLoading(true);
-      const response = await fetch("https://fakestoreapi.com/products");
-      if (componentMounted) {
-        setData(await response.clone().json());
-        setFilter(await response.json());
-        setLoading(false);
-      }
-
-      // return () => {
-      //   componentMounted = false;
-      // };
-
-      componentMounted = false;
+      // const response = await fetch("https://fakestoreapi.com/products");
+      const response = await fetch("http://localhost:3000/products");
+      const data = await response.json();
+      setProductList(data);
+      setFilter(data);
+      setLoading(false);
     };
 
     getProducts();
   }, []);
 
   const filterProduct = (category) => {
-    const updatedList = data.filter((item) => item.category === category);
+    const updatedList = productList.filter(
+      (item) => item.category === category
+    );
     setFilter(updatedList);
   };
 
@@ -59,7 +55,7 @@ const Products = () => {
         <div className="buttons d-flex justify-content-center mb-5 pb-5">
           <button
             className="btn btn-outline-dark me-2"
-            onClick={() => setFilter(data)}
+            onClick={() => setFilter(productList)}
           >
             All
           </button>
@@ -102,7 +98,6 @@ const Products = () => {
                   {product.title.substring(0, 12)}...
                 </h5>
                 <p className="card-text lead fw-bold">${product.price}</p>
-                {console.log(product.rating)}
                 <div>
                   {[...Array(5)].map((_, index) => (
                     <span key={index}>
@@ -112,7 +107,8 @@ const Products = () => {
                         <AiOutlineStar fontSize="15px" />
                       )}
                     </span>
-                  ))} | <span>{product.rating.count} Ratings</span>
+                  ))}{" "}
+                  | <span>{product.rating.count} Ratings</span>
                 </div>
                 <NavLink
                   to={`/products/${product.id}`}
@@ -139,7 +135,6 @@ const Products = () => {
         </div>
         <div className="row justify-content-center">
           {loading ? <Loading /> : <ShowProducts />}
-          {/* {<ShowProducts />} */}
         </div>
       </div>
     </div>
